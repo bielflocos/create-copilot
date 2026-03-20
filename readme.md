@@ -1,81 +1,116 @@
-# 🧩 Modos do Copiloto (Ask, Edit, Plan, Agent e Study)
+# 🧩 Modos do Copiloto — Sentinela HIS
 
-![dio/me](https://img.shields.io/badge/dio-me-ff2d55)
-![IA](https://img.shields.io/badge/IA-Assistente%20Inteligente-blue)
+![Sentinela](https://img.shields.io/badge/Sentinela-HIS-0ea5e9)
+![IA](https://img.shields.io/badge/IA-Copiloto%20Hospitalar-blue)
 ![Prompt](https://img.shields.io/badge/Prompt-engineering-yellow)
+![Node](https://img.shields.io/badge/Node.js-v22-339933)
+![Express](https://img.shields.io/badge/Express-5.x-000000)
+![SQLite](https://img.shields.io/badge/SQLite-sql.js-003B57)
 
-O Copiloto oferece diferentes **modos de interação** para você escolher como quer trabalhar: desde **tirar dúvidas sem mexer no código**, até **editar trechos específicos**, **planejar mudanças maiores** ou **delegar tarefas mais complexas** com um modo mais autônomo. A ideia é simples: você seleciona o modo que melhor combina com seu objetivo no momento e ganha velocidade com mais controle.
+O Copiloto do Sentinela opera em **5 modos de interação**, cada um customizado para o contexto real do sistema hospitalar: stack (Node.js + Express + SQLite + WebSocket), estrutura de arquivos (18 rotas, 6 services, 60+ tabelas), padrões de código (`getDb`, `createLog`, `authMiddleware`, `req.wss`) e domínio clínico (triagem, prescrição, internação, faturamento).
+
+Todos os prompts foram gerados a partir da análise direta do código-fonte do Sentinela — não são templates genéricos.
 
 ---
 
 # ❓ Ask
+
 O modo **Ask** é para fazer perguntas e entender coisas, **sem alterar seu código**. Você pode perguntar sobre um arquivo específico, um erro, uma função, uma stack trace ou até conceitos gerais.
 
-O Copiloto lê o contexto do projeto (arquivos abertos, seleção, etc.) e responde como um **“mentor técnico”**, explicando o que está acontecendo e por quê. **Ele não modifica nada** — só analisa e explica.
+**O que foi customizado para o Sentinela:**
 
-📄 **Prompt:** [prompts/prompt-ask.md](prompts/prompt-ask.md)
+- Conhece a stack real (CommonJS, sql.js, Express 5, WebSocket `ws`)
+- Sabe como funciona a autenticação (JWT + cookies httpOnly + tabela `sessoes`)
+- Sabe como funciona o banco (`getDb().prepare().run()`, sem ORM)
+- Sabe como funciona o WebSocket (`req.wss`, mensagens com campo `type`)
+- Sabe como funciona o RBAC (7 perfis, `hasPermission`, `requirePermission`)
+- Sabe como funciona o frontend (`app.js` → `initApp()` → `checkAuth()` → `init(user)`)
+- Referencia os 18 arquivos de rotas e 60+ tabelas para diagnóstico preciso
+- Formato: Resumo → Explicação → Como confirmar → Opções → Oferta de snippet
+
+📄 **Prompt:** [.github/copilot-ask-instructions.md](.github/copilot-ask-instructions.md)
 
 ---
 
-# ✏️ Edit
-O modo **Edit** serve para **alterar código existente**. Você seleciona um trecho (ou um arquivo inteiro), descreve o que quer mudar, e o Copiloto aplica a modificação diretamente.
+# ✏️ Edit (Agent Code)
 
-Ideal para:
-- refactors
-- ajustes de lógica
-- melhoria de performance
-- mudança de estilo
-- conversão de linguagem
-- adicionar logs
-- tratar erros
+O modo **Edit/Agent** é o mais autônomo. Ele **navega pelo projeto**, **cria arquivos**, **modifica múltiplos pontos** e **mantém contexto entre passos**.
 
-Aqui o foco é: **“pegue isso que já existe e transforme”**.
+**O que foi customizado para o Sentinela:**
 
-📄 **Prompt:** [prompts/prompt-edit.md](prompts/prompt-edit.md)
+- Padrão de rota completo com exemplo real (validação → operação → auditoria → WebSocket → resposta)
+- Padrão de página HTML completo (layout, sidebar, `init(user)`, scripts)
+- Sabe onde encaixar cada tipo de mudança (qual arquivo de rotas, qual service, qual util)
+- Ciclo de trabalho obrigatório: Descobrir → Planejar → Implementar → Verificar → Finalizar
+- Mentalidade hospitalar: avalia risco ao paciente, auditoria, RBAC, duplicidade, integridade clínica
+- Conhece os 27 módulos já implementados para não recriar o que existe
+- Gera código pronto para colar, usando os padrões reais (`require`, `getDb`, `createLog`)
+
+📄 **Prompt:** [.github/copilot-instructions.md](.github/copilot-instructions.md)
 
 ---
 
 # 🧭 Plan
-Quando você pede algo mais complexo, o Copiloto pode entrar em um modo de **planejamento**, onde ele **pensa e descreve os passos antes de sair codando**.
 
-Ele:
-- divide o problema em etapas
-- explica o que vai fazer
-- só depois executa
+O modo **Plan** produz um **plano de implementação revisável** antes de qualquer código. Ele pensa, estrutura e só implementa quando você aprovar.
 
-Isso é muito útil para **mudanças grandes**, **novas features** ou quando você quer **validar a abordagem** antes de mexer no código.
+**O que foi customizado para o Sentinela:**
 
-📄 **Prompt:** [prompts/prompt-plan.md](prompts/prompt-plan.md)
+- Formato obrigatório: Objetivo → Contexto → Escopo → Estratégia → Arquivos → Passos → Testes → Riscos → Próximo passo
+- Diretrizes específicas para: nova rota, nova tabela, nova página frontend, segurança/medicação
+- Conhece os padrões de query do sql.js (`.prepare().run()`, `.getAsObject()`, `.exec()`)
+- Conhece os 3 níveis de auditoria (`nivel: 0` técnico, `1` operacional, `2` crítico)
+- Avalia rollback: o que acontece no banco se a implementação falhar no meio
+- Mentalidade hospitalar: risco ao paciente, duplicidade, integridade entre módulos
+- Regra rígida: no máximo pseudocódigo e assinaturas — código completo só quando aprovado
 
----
-
-# 🤖 Agent
-O **Agent** é o modo mais “autônomo”. Ele pode **navegar pelo projeto**, **criar arquivos**, **modificar múltiplos pontos** e **manter contexto entre passos**, como se fosse um dev júnior trabalhando com você.
-
-Você dá um objetivo (ex.: “implemente login com JWT”) e ele decide o que precisa ser feito em vários arquivos para chegar lá.
-
-📄 **Prompt:** [prompts/prompt-agent.md](prompts/prompt-agent.md)
+📄 **Prompt:** [.github/copilot-plan-instructions.md](.github/copilot-plan-instructions.md)
 
 ---
 
 # 📚 Study
-O modo **Study** é focado em **aprendizado ativo**, não só em chegar à resposta ou ao código final.
 
-Em vez de simplesmente explicar ou executar, ele:
-- ensina e guia o raciocínio
-- destaca conceitos e trade-offs
-- faz perguntas reflexivas
-- avança em progressão gradual de dificuldade
+O modo **Study** é focado em **aprendizado ativo**. Funciona como um tutor que ensina conceitos usando o próprio Sentinela como material didático.
 
-Funciona quase como um **tutor particular**.
+**O que foi customizado para o Sentinela:**
 
-📄 **Prompt:** [prompts/prompt-study.md](prompts/prompt-study.md)
+- Formato de explicação em 7 passos: Nome → Definição → Analogia → Exemplo mínimo → Armadilhas → Quando usar → Checkpoint
+- Analogias hospitalares (triagem como middleware, crachá como JWT)
+- Exemplos de código usando arquivos reais do projeto (`core.routes.js`, `server.js`, `rbac.js`)
+- Catálogo de 10 categorias de temas mapeados ao projeto (Auth, Banco, WebSocket, Express, Node core, Arquitetura, Frontend, IA, Domínio hospitalar)
+- Adaptação automática de nível (iniciante → intermediário → avançado)
+- Checkpoints de compreensão após cada explicação
+- Dois exemplos completos de resposta mostrando o tom exato
+
+📄 **Prompt:** [.github/copilot-study-instructions.md](.github/copilot-study-instructions.md)
 
 ---
 
-# 🧠 Resumo mental rápido
-- **Ask** → entender  
-- **Plan** → planejar antes de agir  
-- **Edit** → mudar código  
-- **Agent** → executar tarefas grandes sozinho  
-- **Study** → entendimento ativo  
+# 🧠 Resumo rápido
+
+- **Ask** → entender o que está acontecendo no código
+- **Edit/Agent** → implementar mudanças com código pronto
+- **Plan** → planejar antes de agir, com plano revisável
+- **Study** → aprender conceitos usando o Sentinela como contexto
+
+---
+
+# 📁 Estrutura dos prompts
+
+```
+.github/
+├── copilot-instructions.md          # Edit/Agent — implementa código
+├── copilot-ask-instructions.md      # Ask — diagnostica e explica
+├── copilot-plan-instructions.md     # Plan — planeja sem implementar
+└── copilot-study-instructions.md    # Study — ensina conceitos
+```
+
+---
+
+# ⚙️ Como usar
+
+1. Copie o conteúdo do prompt desejado
+2. Cole como **system prompt** ou **custom instructions** na sua IA (Copilot, ChatGPT, Claude, Gemini)
+3. O `copilot-instructions.md` é lido automaticamente pelo GitHub Copilot quando está em `.github/`
+
+Todos os prompts foram gerados a partir da análise real do projeto: `package.json`, `server.js`, `schema.sql`, `database.js`, `routes/`, `services/`, `utils/`, `static/` e `utils/rbac.js`.
