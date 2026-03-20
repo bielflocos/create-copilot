@@ -28,7 +28,7 @@ O modo **Ask** é para fazer perguntas e entender coisas, **sem alterar seu cód
 - Referencia os 18 arquivos de rotas e 60+ tabelas para diagnóstico preciso
 - Formato: Resumo → Explicação → Como confirmar → Opções → Oferta de snippet
 
-📄 **Prompt:** [.github/copilot-ask-instructions.md](.github/copilot-ask-instructions.md)
+📄 **Prompt:** [prompt-ask.md](prompt-ask.md)
 
 ---
 
@@ -46,7 +46,7 @@ O modo **Edit/Agent** é o mais autônomo. Ele **navega pelo projeto**, **cria a
 - Conhece os 27 módulos já implementados para não recriar o que existe
 - Gera código pronto para colar, usando os padrões reais (`require`, `getDb`, `createLog`)
 
-📄 **Prompt:** [.github/copilot-instructions.md](.github/copilot-instructions.md)
+📄 **Prompt:** [prompt-agent.md](prompt-agent.md)
 
 ---
 
@@ -64,7 +64,7 @@ O modo **Plan** produz um **plano de implementação revisável** antes de qualq
 - Mentalidade hospitalar: risco ao paciente, duplicidade, integridade entre módulos
 - Regra rígida: no máximo pseudocódigo e assinaturas — código completo só quando aprovado
 
-📄 **Prompt:** [.github/copilot-plan-instructions.md](.github/copilot-plan-instructions.md)
+📄 **Prompt:** [prompt-plan.md](prompt-plan.md)
 
 ---
 
@@ -82,7 +82,7 @@ O modo **Study** é focado em **aprendizado ativo**. Funciona como um tutor que 
 - Checkpoints de compreensão após cada explicação
 - Dois exemplos completos de resposta mostrando o tom exato
 
-📄 **Prompt:** [.github/copilot-study-instructions.md](.github/copilot-study-instructions.md)
+📄 **Prompt:** [prompt-study.md](prompt-study.md)
 
 ---
 
@@ -99,10 +99,10 @@ O modo **Study** é focado em **aprendizado ativo**. Funciona como um tutor que 
 
 ```
 .github/
-├── copilot-instructions.md          # Edit/Agent — implementa código
-├── copilot-ask-instructions.md      # Ask — diagnostica e explica
-├── copilot-plan-instructions.md     # Plan — planeja sem implementar
-└── copilot-study-instructions.md    # Study — ensina conceitos
+├── prompt-ask.md        # Edit/Agent — implementa código
+├── prompt-agent.md     # Ask — diagnostica e explica
+├── prompt-plan.md    # Plan — planeja sem implementar
+└── prompt-study.md    # Study — ensina conceitos
 ```
 
 ---
