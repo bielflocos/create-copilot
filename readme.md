@@ -106,11 +106,4 @@ prompts/
 ```
 
 ---
-
-# ⚙️ Como usar
-
-1. Copie o conteúdo do prompt desejado
-2. Cole como **system prompt** ou **custom instructions** na sua IA (Copilot, ChatGPT, Claude, Gemini)
-3. O `copilot-instructions.md` é lido automaticamente pelo GitHub Copilot quando está em `.github/`
-
 Todos os prompts foram gerados a partir da análise real do projeto: `package.json`, `server.js`, `schema.sql`, `database.js`, `routes/`, `services/`, `utils/`, `static/` e `utils/rbac.js`.
